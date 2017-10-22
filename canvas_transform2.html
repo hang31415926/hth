@@ -24,6 +24,7 @@ var bitmapData;
 var imgData = [
   {name:"pikaqiu",path:"./img/pikaqiu.png"}
 ];
+var selectIcon = null;
 var imglist;
 var pointList=[];
 var mouseX,mouseY;
@@ -116,6 +117,7 @@ function onframe(){
   }
 }
 function down(event){
+  if(selectIcon)return;
   if(mouseObj)return;
   mouseX = event.offsetX - backLayer.x;
   mouseY = event.offsetY - backLayer.y;
@@ -136,6 +138,12 @@ function down(event){
 }
 function up(event){
   mouseObj = null;
+  if(selectIcon){
+    var img = new LBitmap(new LBitmapData(imglist["icon"+selectIcon]));
+    img.x = event.offsetX - 40;
+    img.y = event.offsetY - 40;
+    stageLayer.addChild(img);
+  }
 }
 function move(event){
   mouseX = event.offsetX - backLayer.x;
