@@ -1,0 +1,87 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>   
+<meta charset="UTF-8">   
+<title></title>
+<style type="text/css" media="screen">
+  body{margin:0;padding:0;}
+  #canvas{border:2px solid red;position: absolute;left:80px;top:80px;}
+</style>
+</head>  
+<body>
+	<canvas id="canvas" width="400" height="400" style="">
+	      <p>写在这里面的内容将展示给不兼容canvas的浏览器</p>
+	</canvas>
+  <canvas id="coordinateCanvas" width="1000" height="1000">
+        <p>写在这里面的内容将展示给不兼容canvas的浏览器</p>
+  </canvas>
+</body>
+<script type="text/javascript">	
+
+var canvas=document.getElementById("canvas");
+var ctx=canvas.getContext("2d");
+
+ctx.beginPath(); 
+ctx.arc(120,120,80,0,Math.PI/2,true);
+ctx.lineWidth = 4;
+ctx.strokeStyle = "#000";
+ctx.stroke(); 
+
+ctx.beginPath();
+ctx.lineWidth = 4;
+ctx.strokeStyle = "#0610f8";
+ctx.arc(120,160,80,0,Math.PI/2,false); 
+ctx.stroke(); 
+
+ctx.beginPath(); 
+ctx.arc(280,240,80,0,Math.PI/2,true);
+ctx.fillStyle = "#000"; 
+ctx.fill(); 
+
+ctx.beginPath();
+ctx.fillStyle = "#0610f8"; 
+ctx.arc(280,280,80,0,Math.PI/2,false); 
+ctx.fill();
+
+
+var coordinateCanvas=document.getElementById("coordinateCanvas");
+var coordinateCtx=coordinateCanvas.getContext("2d");
+function coordinateSystem(){//画坐标轴
+  coordinateCtx.lineWidth = 1;
+  coordinateCtx.strokeStyle = 'rgba(81, 195, 50, 0.1)';
+  coordinateCtx.font = "10px Arial";
+  coordinateCtx.textAlign = "center";
+  coordinateCtx.fillStyle = "rgba(0, 0, 0, 0.5)";
+  coordinateCtx.translate(80, 80);
+  var ca = 40,len = 100;
+  for (var i = -len; i < len; i++) {
+    var l = 0;
+    if(i === 0){
+      l = 0;
+      coordinateCtx.lineWidth = 2;
+      coordinateCtx.strokeStyle = 'rgba(255, 246, 148, 0.5)';
+    }
+    coordinateCtx.beginPath();
+    coordinateCtx.moveTo(i*ca+l,-ca*len+l);
+    coordinateCtx.lineTo(i*ca+l,ca*len+l);
+    coordinateCtx.stroke();
+    coordinateCtx.beginPath();
+    coordinateCtx.moveTo(-ca*len+l,i*ca+l);
+    coordinateCtx.lineTo(ca*len+l,i*ca+l);
+    coordinateCtx.stroke();
+    if(i === 0){
+      coordinateCtx.lineWidth = 1;
+      coordinateCtx.strokeStyle = 'rgba(81, 195, 50, 0.2)';
+    }
+  };
+  for (var i = -len; i < len; i++) {
+    coordinateCtx.fillText(i*ca,i*ca,+18);
+    if(i !== 0){
+      coordinateCtx.fillText(i*ca,15,i*ca + 5);
+    }
+  }
+}
+coordinateSystem();//画坐标轴
+
+</script>
+</html>

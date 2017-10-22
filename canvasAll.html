@@ -1,0 +1,292 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>   
+  <meta charset="UTF-8">   
+  <title></title>  
+</head>  
+<body>
+	<canvas id="canvas" width="1000" height="600" style="border:1px solid red">
+	      <p>写在这里面的内容将展示给不兼容canvas的浏览器</p>
+	</canvas>
+</body>
+<script type="text/javascript">	
+var canvas=document.getElementById("canvas");
+var ctx=canvas.getContext("2d");
+
+function transform(){//仿射变换
+  //ctx.scale(2,2);
+  //scale(2,2);
+  
+  //ctx.rotate(20*Math.PI/180);
+  //rotate(20*Math.PI/180);
+  
+  //ctx.translate(100,100);
+  //translate(100,100);
+  
+  //shear(0,1);
+  
+  //ctx.transform(-1,0,0,1,400,0);
+  function scale(sx,sy){
+    ctx.transform(sx,0,0,sy,0,0);
+  }
+  function rotate(a){
+    ctx.transform(Math.cos(a),Math.sin(a),-Math.sin(a),Math.cos(a),0,0);
+  }
+  function translate(x,y){
+    ctx.transform(1,0,0,1,x,y);
+  }
+  function shear(x,y){
+    ctx.transform(1,y,x,1,0,0);
+  }
+}
+transform();
+
+function transA(x1,y1,x2,y2,x3,y3,_x1,_y1,_x2,_y2,_x3,_y3){
+  var A = x1*y2 + y1*x3 + x2*y3 - (y2*x3 + y1*x2 + x1*y3);
+  
+  var a = -(y2*_x3 + y1*_x2 + _x1*y3 - (_x1*y2 + y1*_x3 + _x2*y3))/A;
+  var c = -(_x2*x3 + _x1*x2 + x1*_x3 - (x1*_x2 + _x1*x3 + x2*_x3))/A;
+  var e = -(_x1*y2*x3 + y1*x2*_x3 + x1*_x2*y3 - (x1*y2*_x3 + y1*_x2*x3 + _x1*x2*y3))/A;
+  
+  var b = -((y2*_y3 + y1*_y2 + _y1*y3 - (_y1*y2 + y1*_y3 + _y2*y3)))/A;
+  var d = -(_y2*x3 + _y1*x2 + x1*_y3 - (x1*_y2 + _y1*x3 + x2*_y3))/A;
+  var f = -(_y1*y2*x3 + y1*x2*_y3 + x1*_y2*y3 - (x1*y2*_y3 + y1*_y2*x3 + _y1*x2*y3))/A;
+  ctx.transform(a,b,c,d,e,f);
+}
+
+function transAr(){
+  var test = new Image();
+  test.onload = function(){
+    ctx.save();
+    transA(40,40, 40,200 ,200,40,
+          0,0, 40,200, 200,40);
+    ctx.beginPath();
+    ctx.moveTo(40,40);
+    ctx.lineTo(40,200);
+    ctx.lineTo(200,40);
+    
+    ctx.clip();
+    ctx.drawImage(test,0,0,200,200);
+  
+    ctx.restore();
+  }
+  test.src =  "http://sandbox.runjs.cn/uploads/rs/84/ulljvndy/e26148899e510fb3ff6.jpg";
+}
+transAr();
+
+function coordinateSystem(){//画坐标轴
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#51C332';
+  ctx.font = "10px Arial";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#000";
+  var ca = 40,len = 100;
+  for (var i = -len; i < len; i++) {
+    var l = 0;
+    if(i === 0){
+      l = 0;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#CE0201';
+    }
+    ctx.beginPath();
+    ctx.moveTo(i*ca+l,-ca*len+l);
+    ctx.lineTo(i*ca+l,ca*len+l);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-ca*len+l,i*ca+l);
+    ctx.lineTo(ca*len+l,i*ca+l);
+    ctx.stroke();
+    if(i === 0){
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = '#51C332';
+    }
+  };
+  for (var i = -len; i < len; i++) {
+    ctx.fillText(i*ca,i*ca,+18);
+    if(i !== 0){
+      ctx.fillText(i*ca,15,i*ca + 5);
+    }
+  }
+}
+coordinateSystem();//画坐标轴
+
+
+function drawImg(){//画图像
+  var test = new Image();
+  test.src =  "http://sandbox.runjs.cn/uploads/rs/84/ulljvndy/e26148899e510fb3ff6.jpg";
+  
+  test.onload = function(){
+    
+    ctx.save();
+    ctx.transform(-1,0,0,1,400,0);
+    ctx.drawImage(test,40,40);
+    ctx.restore();
+    
+    ctx.drawImage(test,400,40,200,200);
+    
+    ctx.drawImage(test,100,160,100,100,640,40,200,200);
+    
+    ctx.drawImage(canvas,400,280,500,300);
+  }
+    
+}
+//drawImg();//画图像
+
+
+function line(){//画路径
+  ctx.beginPath();
+  ctx.moveTo(40,40);
+  ctx.lineTo(40,200);
+  ctx.lineTo(140,200);
+  
+  ctx.rect(220,180,180,180);
+  
+  //ctx.lineTo(240,420);
+  
+  //ctx.rect(400,400,180,180);
+  
+  //ctx.closePath();
+
+  //ctx.beginPath();
+  
+  ctx.moveTo(80,40);
+  ctx.lineTo(180,40);
+  ctx.lineTo(180,200);
+  
+  //ctx.closePath();
+  
+  ctx.lineWidth=5;
+  ctx.strokeStyle="green";
+  ctx.stroke();
+  
+  ctx.fillStyle="rgb(255,0,0)";
+  
+  //ctx.clip();
+  ctx.fill();
+}
+//line();
+
+
+function wjx(){//画五角星
+  var x=240,y=40;   
+  ctx.beginPath();  
+  ctx.moveTo(x,y); 
+  //五角星边的长度为100px，x1、h2为五角星的底部点坐标偏差值，x2、h2为五角星上部点偏差值  
+  var x1 = 400*Math.sin(Math.PI/10);  
+  var h1 = 400*Math.cos(Math.PI/10);  
+  var x2 = 200;  
+  var h2 = 200*Math.tan(Math.PI/5);  
+  ctx.lineTo(x+x1,y+h1);  
+  ctx.lineTo(x-200,y+h2);  
+  ctx.lineTo(x+200,y+h2);  
+  ctx.lineTo(x-x1,y+h1);  
+  ctx.lineTo(x-x1,y+h1);  
+  ctx.lineTo(x,y);  
+  ctx.closePath(); 
+  
+  ctx.fillStyle = 'rgb(255,0,0)';
+  ctx.strokeStyle="rgb(255,0,0)";  //描边颜色
+  ctx.lineWidth =2;
+  ctx.stroke();
+  //ctx.save();
+  ctx.clip();
+  ctx.fill();
+  drawImg();
+  //ctx.restrot();
+}
+//wjx()//画五角星
+
+
+function bezier(){//贝塞尔曲线
+  function helper(){
+    drawLine(150,120,250,40);
+    drawLine(250,200,150,230);
+    
+    drawLine(150,230,50,200);
+    drawLine(50,40,150,120);
+  }
+  helper();//辅助线
+  
+  ctx.strokeStyle="rgb(200,0,0)";  //描边颜色
+  ctx.fillStyle="rgb(255,0,0)";// 填充颜色
+
+  ctx.beginPath();//开始路径
+  
+  ctx.moveTo(150,120);//曲线起点
+  ctx.bezierCurveTo(250,40,250,200,150,230);// 右边曲线，（150,230）将作为下条曲线起点
+  ctx.bezierCurveTo(50,200,50,40,150,120);//  两条曲线的点其实是对称的，合并终点。
+  
+  ctx.closePath();//闭合路径
+  ctx.stroke();//描边
+  //ctx.fill();//填充
+  //ctx.clip();
+}
+//bezier();//贝塞尔曲线
+
+
+function linearGradient() {  //线性渐变
+  var gradient = ctx.createLinearGradient(20,20,300,200);
+  drawLine(20,20,300,20);
+  gradient.addColorStop(0,'rgba(200,0,0,0.8)');
+  gradient.addColorStop(0.5,'rgba(0,200,0,0.7)');
+  gradient.addColorStop(1,'rgba(200,0,200,0.9)');
+  
+  ctx.strokeStyle=gradient;
+  ctx.fillStyle= gradient;
+  
+  
+  ctx.fillRect(20,220,500,100);
+  
+  ctx.lineWidth=10;
+  ctx.strokeRect(20,340,300,100);
+  
+  ctx.beginPath();
+  ctx.moveTo(20,20);
+  ctx.lineTo(300,200);
+  ctx.lineWidth=50;
+  ctx.stroke();
+  
+  ctx.fillStyle="rgb(255,0,0)";
+}
+//linearGradient();//线性渐变
+
+
+function radialGradient(){//放射渐变
+  var radgrad = ctx.createRadialGradient(55,75,0,75,75,60);
+//(圆1圆心x，圆1圆心y，圆1半径，圆2圆心x，圆2圆心y，圆2半径，)
+  radgrad.addColorStop(0,'rgba(200,0,0,0.8)');
+  radgrad.addColorStop(0.5,'rgba(0,200,0,0.7)');
+  radgrad.addColorStop(1,'rgba(200,0,200,0.9)');
+  //radgrad.addColorStop(0, '#A7D30C');
+  //radgrad.addColorStop(0.9, '#019F62');
+  //radgrad.addColorStop(1,'rgba(1,159,98,0)');
+  ctx.fillStyle = radgrad;
+  ctx.fillRect(0,0,150,150);
+}
+//radialGradient();//放射渐变
+
+function pattern(direction){//图像平铺
+  var test = new Image();
+  test.src =  "http://sandbox.runjs.cn/uploads/rs/84/ulljvndy/e26148899e510fb3ff6.jpg";
+  test.onload = function(){
+    var pat=ctx.createPattern(test,"no-repeat");
+    ctx.fillStyle=pat;
+    ctx.fillRect(0,0,600,600);
+    
+  }
+}
+//pattern();//图像平铺
+
+function drawLine(x1,y1,x2,y2,w){
+  w = w || 1;
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  
+  ctx.lineWidth=w;
+  ctx.strokeStyle="#000";
+  ctx.stroke();
+}
+
+</script>
+</html>
