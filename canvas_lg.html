@@ -21,16 +21,22 @@
 var canvas=document.getElementById("canvas");
 var ctx=canvas.getContext("2d");
 
-var img = new Image();
-img.src = "./img/phoenix.jpg";
-img.onload = function(){
 
-  ctx.save();
-  ctx.rotate(Math.PI/6);
-  ctx.drawImage(img,0,0,400,400);
-  ctx.restore();
+drawLine(120,40,280,120);
 
-}
+var gradient = ctx.createLinearGradient(120,40,280,120);
+gradient.addColorStop(0,'rgba(200,0,0,0.8)');
+gradient.addColorStop(0.5,'rgba(0,200,0,0.7)');
+gradient.addColorStop(1,'rgba(200,0,200,0.9)');
+
+ctx.strokeStyle = gradient;
+ctx.fillStyle = gradient;
+
+ctx.fillRect(40,140,320,100);
+
+ctx.lineWidth = 8;
+ctx.strokeRect(40,260,320,100);
+
 
 function drawLine(x1,y1,x2,y2,w){
   w = w || 1;
@@ -38,7 +44,7 @@ function drawLine(x1,y1,x2,y2,w){
   ctx.moveTo(x1,y1);
   ctx.lineTo(x2,y2);
   
-  ctx.lineWidth = w;
+  ctx.lineWidth=w;
   ctx.strokeStyle="#000";
   ctx.stroke();
 }
@@ -46,13 +52,12 @@ function drawLine(x1,y1,x2,y2,w){
 var coordinateCanvas=document.getElementById("coordinateCanvas");
 var coordinateCtx=coordinateCanvas.getContext("2d");
 function coordinateSystem(){//画坐标轴
-  coordinateCtx.translate(80, 80);
-  coordinateCtx.rotate(Math.PI/6);
   coordinateCtx.lineWidth = 1;
   coordinateCtx.strokeStyle = 'rgba(81, 195, 50, 0.1)';
   coordinateCtx.font = "10px Arial";
   coordinateCtx.textAlign = "center";
   coordinateCtx.fillStyle = "rgba(0, 0, 0, 0.5)";
+  coordinateCtx.translate(80, 80);
   var ca = 40,len = 100;
   for (var i = -len; i < len; i++) {
     var l = 0;

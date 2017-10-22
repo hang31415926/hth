@@ -26,7 +26,7 @@ img.src = "./img/phoenix.jpg";
 img.onload = function(){
 
   ctx.save();
-  ctx.rotate(Math.PI/6);
+  ctx.scale(2,0.5);
   ctx.drawImage(img,0,0,400,400);
   ctx.restore();
 
@@ -47,7 +47,7 @@ var coordinateCanvas=document.getElementById("coordinateCanvas");
 var coordinateCtx=coordinateCanvas.getContext("2d");
 function coordinateSystem(){//画坐标轴
   coordinateCtx.translate(80, 80);
-  coordinateCtx.rotate(Math.PI/6);
+  coordinateCtx.scale(2,0.5);
   coordinateCtx.lineWidth = 1;
   coordinateCtx.strokeStyle = 'rgba(81, 195, 50, 0.1)';
   coordinateCtx.font = "10px Arial";
