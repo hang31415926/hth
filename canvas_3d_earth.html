@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>3D</title>
+    </head>
+    <body>
+        <div id="legend"></div>
+        <div id="mylegend1" style="position:absolute;top:520px;width:400px;z-index:1;color: #ffffff;background-color:#000000;">
+            旋转速度:<input type="number" max="10" min="0" value="10" onchange="runspeed(this.value);"/>
+            <br/>
+            伸缩:<input type="number" max="100" min="0" value="50" onchange="runmax(this.value);"/>%
+        </div>
+    </body>
+    <script type="text/javascript" src="./js/lufylegend-1.10.1.min.js"></script>
+    <script>
+        //初始化引擎
+        init(50, "legend", 1000, 600, main);
+
+        var leftspeed = 0;
+        var leftindex = 1;
+
+        var upspeed = 10;
+        var upindex = 1;
+        //定义每个顶点的坐标 
+        var vertices;
+        //定义三角形，数组vertices中每三个顶点可以组成一个三角形
+        var indices;
+        //定义上面的每个顶点相对于整张图片的比例
+        var uvtData;
+
+        var backLayer;
+        var bitmapData, earthBitmapData;
+        //分割行数和列数
+        var rows = 12, cols = 24;
+        var mi = 0;
+        var imglist;
+        var testImg;
+        function main() {
+          //加载图片
+          testImg = new Image();
+          testImg.src =  "./img/529c17804792d.jpg";
+          testImg.onload = function(){
+            gameInit();
+          }
+        }
+
+        function gameInit(result){
+          imglist = result;
+          //获取图片数据
+          earthBitmapData = new LBitmapData(testImg);
+
+          //earthBitmapData = new LBitmapData("#ffffff", 0, 0, 500, 300);
+
+          var i, j;
+          //地球半径
+          var r = 100;
+
+          //计算定点坐标
+          vertices = new Array();
+          for (i = 0; i <= cols; i++) {
+            for (j = 0; j <= rows; j++) {
+              //计算弧度
+              var angle = (90 - 180 * j / rows) * Math.PI / 180;
+
+              //计算定点Y坐标
+              var a = Math.sin(angle);
+              //if (j = 0) { alert(a); }
+              if ((90 - 180 * j / rows) % 90 == 0 && (90 - 180 * j / rows) % 180 != 0)
+                a = (90 - 180 * j / rows) > 0 ? 1 : -1;
+              if ((90 - 180 * j / rows) % 180 == 0)
+                a = 0;
+              var sy = -r * a;
+              //sy = j*15;
+
+
+              //计算顶点X坐标
+              var sa = Math.cos(angle);
+              if ((90 - 180 * j / rows) % 180 == 0) sa = 1;
+              var sr = Math.abs(r * sa);
+              //sr = r;
+              var angle2 = 360 * (i + 1) / cols;
+              var b = Math.cos(angle2 * Math.PI / 180);
+              if (angle2 % 360 == 0)
+                b = 1;
+              else if (angle2 % 180 == 0)
+                b = -1;
+              var sx = sr * b;
+              //sx = i*15;
+              vertices.push(sx, sy);
+            }
+          }
+
+          //计算定点三角形位置
+          indices = new Array();
+          for (i = 0; i < cols; i++) {
+            for (j = 0; j < rows; j++) {
+              indices.push(i * (rows + 1) + j, (i + 1) * (rows + 1) + j, i * (rows + 1) + j + 1);
+              indices.push((i + 1) * (rows + 1) + j, i * (rows + 1) + j + 1, (i + 1) * (rows + 1) + j + 1);
+            }
+          }
+
+          //定义定点三角形比例
+          uvtData = new Array();
+          for (i = 0; i <= cols; i++) {
+            for (j = 0; j <= rows; j++) {
+              uvtData.push(i / cols, j / rows);
+            }
+          }
+
+          //创建一个Layer层
+          backLayer = new LSprite();
+          backLayer.x = 100;
+          backLayer.y = 100;
+          //添加对象
+          addChild(backLayer);
+          //使用Sprite的graphic绘图
+          backLayer.graphics.clear();
+          //填充背景
+          backLayer.graphics.beginBitmapFill(earthBitmapData);
+          //LGraphics类添加drawTriangles方法,用于呈现一组三角形
+          backLayer.graphics.drawTriangles(vertices, indices, uvtData ,1);
+
+          //进入图之后，按帧速率调用onframe函数 
+          backLayer.addEventListener(LEvent.ENTER_FRAME, onframe);
+        }
+
+        function onframe() {
+
+          //变换绘制图片的开始位置，造成旋转动画
+          if (leftspeed < 10 && leftindex++ > leftspeed) {
+            leftindex = 0;
+            for (i = 0; i <= rows; i++) {
+              uvtData.push(uvtData.shift());
+              uvtData.push(uvtData.shift());
+            }
+          }
+          if (upspeed < 10 && upindex++ > upspeed) {
+            upindex = 0;
+            for (var i = 1; i < uvtData.length; i += 2) {
+              uvtData[i] += 1 / rows;
+              if (uvtData[i] > 1)
+                uvtData[i] -= 1;
+            }
+          }
+        }
+
+        //调整旋转速度
+        function runspeed(value){
+          leftspeed = 10 - value;
+        }
+
+        //改变地球大小
+        function runmax(value){
+          backLayer.scaleX = value / 50;
+          backLayer.scaleY = backLayer.scaleX;
+        }
+    </script>
+</html>
